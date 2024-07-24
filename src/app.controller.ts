@@ -1,12 +1,16 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Req, UnauthorizedException } from '@nestjs/common';
 import { AppService } from './app.service';
+import { env } from 'process';
 
-@Controller()
+@Controller('cron/authors')
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
   @Get()
-  writeToInfluxDB() {
+  findAll(@Req() request: Request) {
+    if (request.headers.get('Authorization') !== `Bearer ${env.CRON_SECRET}`) {
+      throw new UnauthorizedException();
+    }
     return this.appService.writeToInfluxDB();
   }
 }
