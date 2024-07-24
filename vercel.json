@@ -16,7 +16,7 @@
   "crons": [
     {
       "path": "/cron/authors",
-      "schedule": "30 10 * * *"
+      "schedule": "0 0 * * *"
     }
   ]
 }
