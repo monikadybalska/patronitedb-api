@@ -3,7 +3,7 @@ import * as cheerio from 'cheerio';
 import axios from 'axios';
 import { InfluxDB, Point } from '@influxdata/influxdb-client';
 import { env } from 'process';
-import { parseNumber } from './lib/utils';
+import { parseNumber } from '../lib/utils';
 
 const PATRONITE_URL = 'https://patronite.pl/';
 
@@ -21,7 +21,7 @@ export interface Author {
 }
 
 @Injectable()
-export class AppService {
+export class CrawlerService {
   authors: Map<string, Author>;
 
   constructor() {

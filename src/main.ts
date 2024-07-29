@@ -1,12 +1,12 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
-import { AppService } from './app.service';
+import { CrawlerService } from './crawler/crawler.service';
 import { env } from 'process';
 import 'dotenv/config';
 
 async function runStandalone() {
   const app = await NestFactory.createApplicationContext(AppModule);
-  const crawlerService = app.get(AppService);
+  const crawlerService = app.get(CrawlerService);
   await crawlerService.writeToInfluxDB();
   app.close();
 }
