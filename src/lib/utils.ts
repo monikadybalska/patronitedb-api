@@ -1,3 +1,5 @@
+import { PointValues } from '@influxdata/influxdb3-client';
+
 export function parseNumber(str: string) {
   const regex = /^(\d+(.\d+)?)\s*(tys\.|mln)?\s*(zł)?$/;
   const matches = str.match(regex);
@@ -17,5 +19,14 @@ export function parseNumber(str: string) {
     result *= 1000000;
   }
 
+  return result;
+}
+
+export function parseIntegerFields({ row }: { row: PointValues }) {
+  const result: Record<string, number> = {};
+  const fieldNames = row.getFieldNames();
+  for (const fieldName of fieldNames) {
+    result[`${fieldName}`] = row.getIntegerField(fieldName);
+  }
   return result;
 }

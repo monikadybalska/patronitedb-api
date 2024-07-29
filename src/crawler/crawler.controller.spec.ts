@@ -1,4 +1,4 @@
-import { parseNumber } from './lib/utils';
+import { parseNumber } from '../lib/utils';
 
 describe('Number parsing', () => {
   it('should parse correctly', () => {
