@@ -6,8 +6,9 @@ import { Cron } from '@nestjs/schedule';
 export class CronService {
   constructor(private readonly appService: CrawlerService) {}
 
-  @Cron('15 12 * * * ')
+  @Cron('40 17 * * * ')
   handleCron() {
-    return this.appService.writeToInfluxDB();
+    console.log('cron works');
+    // return this.appService.writeToInfluxDB();
   }
 }
