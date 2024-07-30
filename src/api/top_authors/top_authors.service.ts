@@ -48,7 +48,7 @@ export class TopAuthorsService {
       query += ` (find_in_set(split_part(tags, ',', 1), '${tags}') = 1 OR find_in_set(split_part(tags, ',', 2), '${tags}') = 1 OR find_in_set(split_part(tags, ',', 3), '${tags}') = 1) AND`;
     }
     if (name) {
-      query += `queryString += f" LOWER(name) LIKE '%${name}%' AND`;
+      query += ` LOWER(name) LIKE '%${name}%' AND`;
     }
     if (min_total_revenue) {
       query += ` total_revenue >= ${min_total_revenue} AND`;
@@ -69,9 +69,11 @@ export class TopAuthorsService {
       query += ` number_of_patrons <= ${max_number_of_patrons} AND`;
     }
     query += ` time >= now() - interval '7 days' GROUP BY url) t1 JOIN creators t2 ON t1.url = t2.url AND t1.recent_time = t2.time ORDER BY t2.${criterion} DESC OFFSET ${offset} LIMIT ${limit};`;
+    console.log(query);
     const queryResult = await client.queryPoints(query, env.INFLUX_BUCKET);
     const resultsArray: Author[] = [];
     for await (const row of queryResult) {
+      console.log(row);
       const integerFields = parseIntegerFields({ row });
       const arrayElement = {
         ...row['_tags'],

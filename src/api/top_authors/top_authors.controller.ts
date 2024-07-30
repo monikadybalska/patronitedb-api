@@ -9,7 +9,7 @@ export class TopAuthorsController {
   getTopAuthors(
     @Query('criterion') criterion: string,
     @Query('offset') offset: number,
-    @Query('offset') limit: number,
+    @Query('limit') limit: number,
     @Query('tags') tags?: string,
     @Query('name') name?: string,
     @Query('min_total_revenue') min_total_revenue?: number,
