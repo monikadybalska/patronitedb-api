@@ -18,9 +18,10 @@ import { RowCountService } from './api/row_count/row_count.service';
 import { MinMaxController } from './api/min_max/min_max.controller';
 import { MinMaxService } from './api/min_max/min_max.service';
 import { ScheduleModule } from '@nestjs/schedule';
+import { CronModule } from './cron/cron.module';
 
 @Module({
-  imports: [ScheduleModule.forRoot()],
+  imports: [ScheduleModule.forRoot(), CronModule],
   controllers: [
     AuthorController,
     GainController,
