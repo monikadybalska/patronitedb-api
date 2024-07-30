@@ -13,8 +13,8 @@ async function runStandalone() {
 
 async function runApi() {
   const app = await NestFactory.create(AppModule);
-  await app.init();
-  return app;
+  app.enableCors();
+  await app.listen(parseInt(process.env.PORT) || 3000);
 }
 
 async function bootstrap() {
