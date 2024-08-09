@@ -1,8 +1,8 @@
 import { InfluxDBClient } from '@influxdata/influxdb3-client';
 import { Injectable } from '@nestjs/common';
 import { env } from 'process';
-import { Author } from 'src/lib/types';
-import { parseIntegerFields } from 'src/lib/utils';
+import { Author } from '../../lib/types';
+import { parseIntegerFields } from '../../lib/utils';
 
 @Injectable()
 export class AuthorService {

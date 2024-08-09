@@ -1,7 +1,7 @@
 import { InfluxDBClient } from '@influxdata/influxdb3-client';
 import { Injectable } from '@nestjs/common';
 import { env } from 'process';
-import { Author } from 'src/lib/types';
+import { Author } from '../../lib/types';
 
 @Injectable()
 export class TrendingAuthorsService {
