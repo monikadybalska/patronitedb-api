@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 
 import { AuthorController } from './api/author/author.controller';
 import { CategoriesController } from './api/categories/categories.controller';
-import { CrawlerService } from './crawler/crawler.service';
 import { AuthorService } from './api/author/author.service';
 import { CategoriesService } from './api/categories/categories.service';
 import { TopAuthorsController } from './api/top_authors/top_authors.controller';
@@ -17,11 +16,8 @@ import { RowCountController } from './api/row_count/row_count.controller';
 import { RowCountService } from './api/row_count/row_count.service';
 import { MinMaxController } from './api/min_max/min_max.controller';
 import { MinMaxService } from './api/min_max/min_max.service';
-import { ScheduleModule } from '@nestjs/schedule';
-import { CronModule } from './cron/cron.module';
 
 @Module({
-  imports: [ScheduleModule.forRoot(), CronModule],
   controllers: [
     AuthorController,
     GainController,
@@ -33,7 +29,6 @@ import { CronModule } from './cron/cron.module';
     MinMaxController,
   ],
   providers: [
-    CrawlerService,
     AuthorService,
     GainService,
     CategoriesService,
