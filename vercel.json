@@ -12,11 +12,5 @@
       "dest": "src/main.ts",
       "methods": ["GET", "POST", "PUT", "DELETE"]
     }
-  ],
-  "crons": [
-    {
-      "path": "/cron/authors",
-      "schedule": "30 10 * * *"
-    }
   ]
 }
