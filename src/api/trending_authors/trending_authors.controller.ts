@@ -8,7 +8,15 @@ export class TrendingAuthorsController {
   ) {}
 
   @Get()
-  getTrendingAuthors(@Query('criterion') criterion: string) {
-    return this.trendingAuthorsService.getTrendingAuthors(criterion);
+  getTrendingAuthors(
+    @Query('order') order: string,
+    @Query('criterion') criterion: string,
+    @Query('days') days: string,
+  ) {
+    return this.trendingAuthorsService.getTrendingAuthors(
+      order,
+      criterion,
+      days,
+    );
   }
 }

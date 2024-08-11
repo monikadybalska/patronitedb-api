@@ -15,28 +15,29 @@ export class TrendingAuthorsService {
     return client;
   }
 
-  async getTrendingAuthors(criterion: string) {
+  async getTrendingAuthors(order: string, criterion: string, days: string) {
     const client = this.getInfluxDBClient();
+    const endOfPreviousPeriod = parseInt(days) + 1;
 
     const query = `SELECT
-                          weekly.*,
-                          weekly.${criterion} - monthly.${criterion} AS gain
+                          current_period.*,
+                          current_period.${criterion} - last_period.${criterion} AS gain
                           FROM 
-                              (SELECT monthly.url, monthly.${criterion} FROM
+                              (SELECT last_period.url, last_period.${criterion} FROM
                                   (SELECT url, MIN(time) as starting_time FROM
-                                  creators WHERE time >= now() - interval '14 day' AND time < now() - interval '7 day' GROUP BY url) last_month
+                                  creators WHERE time > now() - interval '${endOfPreviousPeriod} day' AND time < now() - interval '${days} day' GROUP BY url) end_of_period
                                   JOIN
-                                  creators monthly
-                                  ON last_month.url = monthly.url AND last_month.starting_time = monthly.time)
+                                  creators last_period
+                                  ON end_of_period.url = last_period.url AND end_of_period.starting_time = last_period.time)
                               JOIN
-                              (SELECT weekly.* FROM
+                              (SELECT current_period.* FROM
                                   (SELECT url, MAX(time) as recent_time FROM
-                                  creators WHERE time >= now() - interval '7 days' GROUP BY url) last_week
+                                  creators WHERE time >= now() - interval '1 day' GROUP BY url) last_day
                                   JOIN
-                                  creators weekly
-                                  ON last_week.url = weekly.url AND last_week.recent_time = weekly.time)
-                              ON weekly.url = monthly.url AND weekly.${criterion} > monthly.${criterion}
-                          WHERE weekly.${criterion} > -1 AND monthly.${criterion} > -1 ORDER BY gain DESC
+                                  creators current_period
+                                  ON last_day.url = current_period.url AND last_day.recent_time = current_period.time)
+                              ON current_period.url = last_period.url
+                          WHERE current_period.${criterion} > -1 AND last_period.${criterion} > -1 ORDER BY gain ${order}
                           LIMIT 10;`;
     const queryResult = await client.query(query, env.INFLUX_BUCKET);
     const resultsArray: Author[] = [];
