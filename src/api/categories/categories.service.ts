@@ -17,11 +17,14 @@ export class CategoriesService {
   async getCategories() {
     const client = this.getInfluxDBClient();
 
-    const query = `SELECT DISTINCT * FROM (SELECT DISTINCT split_part(tags, ',', 1) AS tag FROM creators
-                  UNION
-                  SELECT DISTINCT split_part(tags, ',', 2) AS tag FROM creators
-                  UNION
-                  SELECT DISTINCT split_part(tags, ',', 3) AS tag FROM creators) WHERE length(tag) > 0ORDER by tag`;
+    const query = `SELECT tag FROM (SELECT DISTINCT tag FROM 
+    (SELECT DISTINCT split_part(tags, ',', 1) AS tag FROM (SELECT DISTINCT tags FROM creators)
+    UNION
+    SELECT DISTINCT split_part(tags, ',', 2) AS tag FROM (SELECT DISTINCT tags FROM creators)
+    UNION
+    SELECT DISTINCT split_part(tags, ',', 3) AS tag FROM (SELECT DISTINCT tags FROM creators)
+    ))
+    ORDER BY tag`;
     const queryResult = await client.queryPoints(query, env.INFLUX_BUCKET);
     const resultsArray: string[] = [];
     for await (const row of queryResult) {
