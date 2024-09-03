@@ -40,7 +40,7 @@ export class RowCountService {
       query += ` (find_in_set(split_part(tags, ',', 1), '${tags}') = 1 OR find_in_set(split_part(tags, ',', 2), '${tags}') = 1 OR find_in_set(split_part(tags, ',', 3), '${tags}') = 1) AND`;
     }
     if (name) {
-      query += `queryString += f" LOWER(name) LIKE '%${name}%' AND`;
+      query += ` LOWER(name) LIKE '%${name}%' AND`;
     }
     if (min_total_revenue) {
       query += ` total_revenue >= ${min_total_revenue} AND`;
