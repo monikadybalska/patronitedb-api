@@ -43,9 +43,15 @@ export class TopAuthorsService {
   }) {
     const client = this.getInfluxDBClient();
 
-    let query = `SELECT t2.* FROM (SELECT url, MAX(time) as recent_time FROM creators WHERE`;
+    let query = `SELECT t2.* FROM (SELECT url, MAX(time) as recent_time`;
     if (tags) {
-      query += ` (find_in_set(split_part(tags, ',', 1), '${tags}') = 1 OR find_in_set(split_part(tags, ',', 2), '${tags}') = 1 OR find_in_set(split_part(tags, ',', 3), '${tags}') = 1) AND`;
+      query += `,find_in_set(split_part(last_value(tags ORDER BY time), ',', 1), '${tags}') = 1 AS first_tag,
+        find_in_set(split_part(last_value(tags ORDER BY time), ',', 2), '${tags}') = 1 AS second_tag,
+        find_in_set(split_part(last_value(tags ORDER BY time), ',', 3), '${tags}') = 1 AS third_tag`;
+    }
+    query += ` FROM creators WHERE time >= now() - interval '7 days' GROUP BY url) t1 JOIN creators t2 ON t1.url = t2.url AND t1.recent_time = t2.time WHERE`;
+    if (tags) {
+      query += ' (first_tag OR second_tag OR third_tag) AND';
     }
     if (name) {
       query += ` LOWER(name) LIKE '%${name}%' AND`;
@@ -68,7 +74,7 @@ export class TopAuthorsService {
     if (max_number_of_patrons) {
       query += ` number_of_patrons <= ${max_number_of_patrons} AND`;
     }
-    query += ` time >= now() - interval '7 days' GROUP BY url) t1 JOIN creators t2 ON t1.url = t2.url AND t1.recent_time = t2.time ORDER BY t2.${criterion} DESC OFFSET ${offset} LIMIT ${limit};`;
+    query += ` 1 = 1 ORDER BY t2.${criterion} DESC OFFSET ${offset} LIMIT ${limit};`;
     const queryResult = await client.queryPoints(query, env.INFLUX_BUCKET);
     const resultsArray: Author[] = [];
     for await (const row of queryResult) {
